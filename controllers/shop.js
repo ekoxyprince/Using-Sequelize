@@ -136,12 +136,15 @@ return req.user.createOrder()
 .catch(err=>console.log(err))
 }
 exports.getOrders = (req, res, next) => {
-req.user.getOrders()
-.then().catch(err=>console.log(err))
+req.user.getOrders({include:['products']})
+.then(orders=>{
+  console.log(orders[0].products)
   res.render('shop/orders', {
     path: '/orders',
-    pageTitle: 'Your Orders'
+    pageTitle: 'Your Orders',
+    orders:orders
   });
+}).catch(err=>console.log(err))
 };
 
 exports.getCheckout = (req, res, next) => {
