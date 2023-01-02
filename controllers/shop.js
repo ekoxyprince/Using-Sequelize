@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart');
-const User = require("../models/user")
+const User = require("../models/user");
+const OrderItem = require('../models/order-item');
 
 exports.getProducts = (req, res, next) => {
   Product.findAll().then(products=>{
@@ -110,13 +111,27 @@ req.user
 };
 
 exports.postOrders = (req,res,next)=>{
+  let fetchedCart;
 req.user
 .getCart()
 .then(cart=>{
+  fetchedCart = cart
 return cart.getProducts()
 })
 .then(products=>{
-  console.log(products)
+return req.user.createOrder()
+.then(order=>{
+ return order.addProducts(products.map(product=>{
+    product.orderItem = {Quantity :product.cartItem.Quantity}
+    return product
+  }))
+}).catch(err=>console.log(err))
+})
+.then((result)=>{
+  return fetchedCart.setProducts(null)
+})
+.then(result=>{
+  res.redirect("/orders")
 })
 .catch(err=>console.log(err))
 }
