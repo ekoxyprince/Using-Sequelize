@@ -136,6 +136,8 @@ return req.user.createOrder()
 .catch(err=>console.log(err))
 }
 exports.getOrders = (req, res, next) => {
+req.user.getOrders()
+.then().catch(err=>console.log(err))
   res.render('shop/orders', {
     path: '/orders',
     pageTitle: 'Your Orders'
